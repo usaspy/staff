@@ -1,0 +1,15 @@
+MYSQL_LOGINNAME = "root"
+MYSQL_PASSWORD = "20j&^%&12Aw"
+MYSQL_HOST = "47.108.31.86"
+DATABASE = "pandaparking"
+
+#
+RESTFul_API_HOST = "0.0.0.0"
+RESTFul_API_PORT = 4441
+
+#小程序信息
+APPID = "wx3eb56946f427e979"
+APPSECRET = "efaf9c63776a12807e9dcef29987e138"
+
+#本应用信息
+SYSTEM_ID = "restapi-staff-01"
