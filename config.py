@@ -5,7 +5,7 @@ DATABASE = "pandaparking"
 
 #
 RESTFul_API_HOST = "0.0.0.0"
-RESTFul_API_PORT = 4441
+RESTFul_API_PORT = 5550
 
 #小程序信息
 APPID = "wx3eb56946f427e979"
