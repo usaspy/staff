@@ -13,3 +13,12 @@ APPSECRET = "efaf9c63776a12807e9dcef29987e138"
 
 #本应用信息
 SYSTEM_ID = "restapi-staff-01"
+
+#主机间Token同步开关 1:需要同步  0:不需要同步
+TOKEN_SYNC_FLAG = 1
+
+#消息队列
+MQ_HOST = "47.108.31.86"
+MQ_PORT = 5672
+MQ_USER = "admin"
+MQ_PASSWORD = "rabbitmq_pass"
