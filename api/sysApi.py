@@ -9,7 +9,6 @@ import datetime
 @app.route('/sys/initial_data', methods=['GET'])
 def get_sys_initial_data():
     envs={}
-    envs["DISTANCE"] = sysParam.DISTANCE
     envs["ORDER_STATE"] = sysDict.ORDER_STATE
     envs["PARKING_STATE"] = sysDict.PARKING_STATE
     envs["PARKING_TYPE"] = sysDict.PARKING_TYPE
