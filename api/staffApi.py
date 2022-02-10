@@ -22,7 +22,7 @@ def get_staff_initial_data():
 
    # 获得员工信息
    staff_info = staffService.getStaffInfo(staff_id)
-   staff_data["STAFF_INFO"] = {"realname": staff_info.realname, "sex": staff_info.sex, "idcard": staff_info.idcard, "pmc": staff_info.pmc, "state": staff_info.state, "wx_phone": staff_info.wx_phone, "wx_avatar_url":staff_info.wx_avatar_url, "wx_nickname":staff_info.wx_nickname, "parking_id":staff_info.parking_id}
+   staff_data["STAFF_INFO"] = {"realname": staff_info.realname, "sex": staff_info.sex, "idcard": staff_info.idcard, "pmc": staff_info.pmc, "wx_phone": staff_info.wx_phone, "wx_avatar_url":staff_info.wx_avatar_url, "wx_nickname":staff_info.wx_nickname, "parking_id":staff_info.parking_id}
 
    # 获得停车场信息
    parking, parking_gates = staffService.getParkingInfo(staff_info.parking_id)
