@@ -81,7 +81,7 @@ class PARKING_GATES(db.Model):
     category = db.Column(db.Integer)
     name = db.Column(db.String(36))
     device_id = db.Column(db.String(36))
-    qr_image_id = db.Column(db.String(36))
+    qr_image_id = db.Column(db.String(255))
     created_at = db.Column(db.DateTime)
     updated_at = db.Column(db.DateTime)
     deleted_at = db.Column(db.DateTime)
