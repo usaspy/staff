@@ -39,47 +39,30 @@ def generateToken(code, TOKENS_CACHE, expire = 3600*24):
         new_token = b64_token.decode("iso8859-1")
 
         #车主表新增或车主表更新session_key和token
-        owner = OWNER.query.filter_by(open_id=openid).first()
+        staff = STAFF.query.filter_by(open_id=openid).first()
 
-        if owner: #车主已存在
-           db.session.query(OWNER).filter(OWNER.uuid == owner.uuid).update({"session_key":session_key, "token": new_token, "updated_at": str(nowTime)})
+        if staff: #员工存在
+           db.session.query(STAFF).filter(STAFF.uuid == staff.uuid).update({"session_key":session_key, "token": new_token, "updated_at": str(nowTime)})
            db.session.commit()
 
-           TOKENS_CACHE.pop(owner.token, None)  # 从Cache中删除old_token (一定要先删再加，因为在有效期内session_key一样，后面可以改一下token得生成规则)
-           TOKENS_CACHE[new_token] = {"uuid":owner.uuid, "session_key":session_key, "open_id": openid, "updated_at": nowTime} #更新Cache中的用户token（因为session_key每次登陆后都会改变）
+           TOKENS_CACHE.pop(staff.token, None)  # 从Cache中删除old_token (一定要先删再加，因为在有效期内session_key一样，后面可以改一下token得生成规则)
+           TOKENS_CACHE[new_token] = {"uuid":staff.uuid, "session_key":session_key, "open_id": openid, "updated_at": nowTime} #更新Cache中的用户token（因为session_key每次登陆后都会改变）
 
            # 消息入库并加入到本地TOKEN_CACHE之后
            # 通过消息队列同步到其他主机上的TOKEN_CACHE
            if cfg.TOKEN_SYNC_FLAG:
                message = json.dumps(
-                   {'SYSTEM_ID': "%s" % cfg.SYSTEM_ID, 'ADD': "%s" % str({"key": new_token, "values": TOKENS_CACHE[new_token]}), 'DELETE:': "%s" % str({"key": owner.token})})
-               try:
-                   mq.syncTokenCache_publish(message)
-               except Exception as ex:
-                   print("同步TOKEN到其他服务器时出错...[%s]" % cfg.SYSTEM_ID)
-        else:  #新用户登录
-           new_owner = OWNER(uuid=tools.generateUUID(), open_id=openid, session_key=session_key, token=new_token, state=0, created_at=nowTime, updated_at=nowTime)
-           new_owner_info = OWNER_INFO(owner_id=new_owner.uuid, wx_phone="unknown", wx_nickname="unknown", wx_avatar_url="unknown")
-           db.session.add(new_owner)
-           db.session.add(new_owner_info)
-           db.session.commit()
-
-           TOKENS_CACHE[new_token] = {"uuid":new_owner.uuid, "session_key":session_key, "open_id": openid, "updated_at": str(nowTime)} #从Cache中增加new_token
-
-           # 消息入库并加入到本地TOKEN_CACHE之后
-           # 通过消息队列同步到其他主机上的TOKEN_CACHE
-           if cfg.TOKEN_SYNC_FLAG:
-               message = json.dumps(
-                   {'SYSTEM_ID': "%s" % cfg.SYSTEM_ID,
-                    'ADD:': "%s" % str({"key": new_token, "values": TOKENS_CACHE[new_token]})})
+                   {'SYSTEM_ID': "%s" % cfg.SYSTEM_ID, 'ADD': "%s" % str({"key": new_token, "values": TOKENS_CACHE[new_token]}), 'DELETE:': "%s" % str({"key": staff.token})})
                try:
                    mq.syncTokenCache_publish(message)
                except Exception as ex:
                    print("同步TOKEN到其他服务器时出错...[%s]" % cfg.SYSTEM_ID)
 
-        return new_token
-
-    return None
+           return new_token
+        else:  #该员工不存在，需要先完成绑定身份操作
+           return 2
+    else:
+        return 1
 
 
 def TokenCache_initialize(TOKENS_CACHE):
@@ -103,6 +86,32 @@ def removeToken(token, TOKENS_CACHE):
 
     return True
 
+#员工首次使用前身份验证
+def verify(code, realname, idcard, phone):
+    # 比对信息，匹配身份信息
+    staff_info = db.session.query(STAFF_INFO).filter(STAFF_INFO.wx_phone == phone, STAFF_INFO.idcard == idcard, STAFF_INFO.realname == realname).first()
 
-def identification(code, realname, idcard, phone):
-    pass
+    if staff_info:
+        status, session_key, openid = __code2Session(code, cfg.APPID, cfg.APPSECRET)
+
+        if status:
+            nowTime = datetime.datetime.now()
+            uuid = tools.generateUUID()
+            # 生成new_token
+            token_str = str(session_key)
+            b64_token = base64.urlsafe_b64encode(token_str.encode("iso8859-1"))
+            new_token = b64_token.decode("iso8859-1")
+
+            new_staff = STAFF(uuid=uuid, open_id=openid, session_key=session_key, token=new_token,
+                              state=0, created_at=nowTime, updated_at=nowTime)
+            db.session.query(STAFF_INFO).filter(STAFF_INFO.id == staff_info.id).update(
+                {"staff_id": uuid, "updated_at": str(nowTime)})
+            db.session.add(new_staff)
+            db.session.commit()
+
+            return 0
+        else:
+            return 1  #调用微信服务器认证接口失败
+
+    else:
+        return 2   #匹配失败，系统内无该员工信息

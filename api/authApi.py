@@ -7,29 +7,35 @@ from flask import jsonify
 
 '''
 物业人员首次使用前执行身份识别
-识别成功则记录staff，并绑定staff_info得staff_id
+识别成功则记录到staff，并将staff_id绑定到staff_info
 返回：识别成功或失败
 '''
-@app.route('/auth/identification/<string:code>',methods=['POST'])
-def identification(code):
+@app.route('/auth/verify/<string:code>',methods=['POST'])
+def verify(code):
    realname = request.json["realname"]
    idcard = request.json["idcard"]
    phone = request.json["phone"]
 
-   result = authService.identification(code, realname, idcard, phone)
+   result = authService.verify(code, realname, idcard, phone)
 
-   if result:
+   if result == 0:
       return jsonify({"result": "success"})
    else:
-      return jsonify({"result": "failure"})
+      return jsonify({"result": "failure", "errcode": result})
+
 
 #小程序用户登录认证获取token
 #调用此接口将生成TOKEN,并同步到内存TOKEN_CACHE中去
 @app.route('/auth/token/<string:code>',methods=['GET'])
 def getToken(code):
-   token = authService.generateToken(code, TOKENS_CACHE)
+   result = authService.generateToken(code, TOKENS_CACHE)
 
-   return jsonify({'token': token})
+   if result == 1:
+      return jsonify({"result": "failure", "errcode": result})
+   elif result == 2:
+      return jsonify({"result": "failure", "errcode": result})
+   else:
+      return jsonify({'token': result})
 
 
 #初始化TOKEN_CACHE
@@ -39,5 +45,5 @@ def TokenCache_initialize():
    TOKENS_CACHE.clear() #清空字典
    len = authService.TokenCache_initialize(TOKENS_CACHE)
 
-   return jsonify({'result':'tokens cache initialized','cache_size': len})
+   return jsonify({'result': 'tokens cache initialized', 'cache_size': len})
 

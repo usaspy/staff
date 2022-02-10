@@ -20,9 +20,9 @@ def dec2bin(string_num):
 
 import datetime
 if __name__ == "__main__":
-    a = "[2,3,4,5]"
-    print(eval(a))
-    for i in a:
-        print(i)
-    print(type(eval(a)))
+    a = None
 
+    if a is not None:
+        print("1111")
+    else:
+        print("22222")
