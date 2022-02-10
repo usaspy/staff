@@ -8,9 +8,9 @@ def syncTokenCache_publish(msg):
 
     channelx = conn.channel()
 
-    channelx.exchange_declare(exchange="token", exchange_type="fanout")
+    channelx.exchange_declare(exchange="token_staff", exchange_type="fanout")
 
-    channelx.basic_publish(exchange="token", routing_key="", body=msg)
+    channelx.basic_publish(exchange="token_staff", routing_key="", body=msg)
 
     conn.close()
 
@@ -20,11 +20,11 @@ def syncTokenCache_consume(TOKENS_CACHE):
 
     channelx = conn.channel()
 
-    channelx.exchange_declare(exchange="token", exchange_type="fanout")
+    channelx.exchange_declare(exchange="token_staff", exchange_type="fanout")
 
     channelx.queue_declare(cfg.SYSTEM_ID, exclusive=True)
 
-    channelx.queue_bind(exchange="token", queue=cfg.SYSTEM_ID)
+    channelx.queue_bind(exchange="token_staff", queue=cfg.SYSTEM_ID)
 
     def doit(channelx, methodx, v3, bodyx):
         try:
