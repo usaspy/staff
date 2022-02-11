@@ -9,8 +9,6 @@ import config
 from common import tools
 import datetime
 
-
-
 # [获取员工初始信息]
 @app.route('/api/staff/initial_data', methods=['GET'])
 def get_staff_initial_data():
