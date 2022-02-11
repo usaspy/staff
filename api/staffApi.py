@@ -26,17 +26,19 @@ def get_staff_initial_data():
 
    # 获得停车场信息
    parking, parking_gates = staffService.getParkingInfo(staff_info.parking_id)
-   gates = {}
+   gs = []
    for gate in parking_gates:
-       gates["id"] = gate.id
-       gates["category"] = gate.category
-       gates["name"] = gate.name
-       gates["device_id"] = gate.device_id
-       gates["qr_image_id"] = gate.qr_image_id
+       g = {}
+       g["id"] = gate.id
+       g["category"] = gate.category
+       g["name"] = gate.name
+       g["device_id"] = gate.device_id
+       g["qr_image_id"] = gate.qr_image_id
+       gs.append(g)
 
    staff_data["PARKING_INFO"] = {"parking_id": parking.uuid, "parking_name": parking.name, "parking_address": parking.address, "service_time": parking.service_time,
                                "service_spaces": parking.service_spaces, "service_kind": parking.service_kind, "state": parking.state,
-                               "gates": gates}
+                               "gates": gs}
 
    #当前预约得车辆数
    staff_data["ORDERS_0"] = staffService.getCounts_Orders(staff_info.parking_id, 0)
