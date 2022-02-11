@@ -92,7 +92,7 @@ def my_messages():
    for msg in my_messages:
       messages.append({"message_id":msg.id,"message_type":msg.message_type,"message_body":msg.message_body,"created_at":msg.created_at,"read_at":msg.read_at})
 
-   return jsonify({"my_orders_fee": messages})
+   return jsonify({"my_messages": messages})
 
 #查看我的消息
 @app.route('/api/staff/message/<string:message_id>',methods=['GET'])
