@@ -38,13 +38,8 @@ def get_staff_initial_data():
                                "service_spaces": parking.service_spaces, "service_kind": parking.service_kind, "state": parking.state,
                                "gates": gs}
 
-   #当前预约得车辆数
-   staff_data["ORDERS_0"] = staffService.getCounts_Orders(staff_info.parking_id, 0)
-   #已进场得车辆数
-   staff_data["ORDERS_1"] = staffService.getCounts_Orders(staff_info.parking_id, 1)
-
    staff_data["TIMESTAMP"] = datetime.datetime.now()
-   staff_data["说明"] = "{'MESSAGES':'我得消息','STAFF_INFO':'用户资料','PARKING_INFO':'分管停车场信息','ORDERS_0':'当前预约数','ORDERS_1':'已入场车数','STAFF_INFO':'用户资料'}"
+   staff_data["说明"] = "{'MESSAGES':'我得消息','STAFF_INFO':'用户资料','PARKING_INFO':'分管停车场信息','STAFF_INFO':'用户资料'}"
    print(staff_data)
    return jsonify(staff_data)
 
@@ -120,6 +115,38 @@ def read_all_messages():
       return jsonify({"result": "success"})
    else:
       return jsonify({"result": "failure"})
+
+
+# [查找处于预约状态的订单和车牌]
+@app.route('/api/staff/<string:parking_id>/0/lists', methods=['GET'])
+def get_0_lists(parking_id):
+   order, vehicle = staffService.getOrders(parking_id, 0)
+   ls = []
+   for o,v in order, vehicle:
+       obj = {}
+       obj["order_id"] = o.uuid
+       obj["vehicle_id"] = v.id
+       obj["vehicle_number"] = v.vehicle_number
+       obj["vehicle_info"] = v.vehicle_info
+       ls.append(obj)
+
+   return jsonify({"lists": ls})
+
+
+# [查找已进场得订单和车牌]
+@app.route('/api/staff/<string:parking_id>/1/lists', methods=['GET'])
+def get_1_lists(parking_id):
+   order, vehicle = staffService.getOrdersVehicles(parking_id, 1)
+   ls = []
+   for o, v in order, vehicle:
+      obj = {}
+      obj["order_id"] = o.uuid
+      obj["vehicle_id"] = v.id
+      obj["vehicle_number"] = v.vehicle_number
+      obj["vehicle_info"] = v.vehicle_info
+      ls.append(obj)
+
+   return jsonify({"lists": ls})
 
 '''
 用户退出登录

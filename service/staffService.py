@@ -3,6 +3,7 @@ import datetime
 from api import db
 from model.pmc import *
 from model.parking import *
+from model.owner import *
 from model.order import *
 from model.message import MESSAGE
 from common import tools
@@ -34,10 +35,10 @@ def getParkingInfo(parking_id):
 
     return parking, parking_gates
 
-def getCounts_Orders(parking_id,state):
-    orders_count = db.session.query(ORDER).filter(ORDER.parking_id == parking_id, ORDER.state == state).count()
+def getOrdersVehicles(parking_id,state):
+    order, vehicle = db.session.query(ORDER,VEHICLE).filter(ORDER.parking_id == parking_id, ORDER.vehicle_id == VEHICLE.id, ORDER.state == state).all()
 
-    return orders_count
+    return order, vehicle
 
 #查询员工信息
 def getStaffInfo(staff_id):
