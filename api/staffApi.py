@@ -38,6 +38,11 @@ def get_staff_initial_data():
                                "service_spaces": parking.service_spaces, "service_kind": parking.service_kind, "state": parking.state,
                                "gates": gs}
 
+   #当前预约得车辆数
+   #staff_data["ORDERS_0"] = staffService.getCounts_Orders(staff_info.parking_id, 0)
+   #已进场得车辆数
+   #staff_data["ORDERS_1"] = staffService.getCounts_Orders(staff_info.parking_id, 1)
+
    staff_data["TIMESTAMP"] = datetime.datetime.now()
    staff_data["说明"] = "{'MESSAGES':'我得消息','STAFF_INFO':'用户资料','PARKING_INFO':'分管停车场信息','STAFF_INFO':'用户资料'}"
    print(staff_data)
@@ -120,7 +125,7 @@ def read_all_messages():
 # [查找处于预约状态的订单和车牌]
 @app.route('/api/staff/<string:parking_id>/0/lists', methods=['GET'])
 def get_0_lists(parking_id):
-   order, vehicle = staffService.getOrders(parking_id, 0)
+   order, vehicle = staffService.getOrdersVehicles(parking_id, 0)
    ls = []
    for o,v in order, vehicle:
        obj = {}

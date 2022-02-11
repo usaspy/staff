@@ -40,6 +40,11 @@ def getOrdersVehicles(parking_id,state):
 
     return order, vehicle
 
+def getCounts_Orders(parking_id,state):
+    orders_count = db.session.query(ORDER).filter(ORDER.parking_id == parking_id, ORDER.state == state).count()
+
+    return orders_count
+
 #查询员工信息
 def getStaffInfo(staff_id):
     staff_info = db.session.query(STAFF_INFO).filter(STAFF_INFO.staff_id == staff_id).first()
