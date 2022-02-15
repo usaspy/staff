@@ -125,33 +125,35 @@ def read_all_messages():
 # [查找处于预约状态的订单和车牌]
 @app.route('/api/staff/<string:parking_id>/0/lists', methods=['GET'])
 def get_0_lists(parking_id):
-   order, vehicle = staffService.getOrdersVehicles(parking_id, 0)
-   ls = []
-   for o,v in order, vehicle:
+   ls = staffService.getParkingVehicles(parking_id, [0])
+   result = []
+   for o,v in ls:
        obj = {}
        obj["order_id"] = o.uuid
+       obj["state"] = o.state
        obj["vehicle_id"] = v.id
        obj["vehicle_number"] = v.vehicle_number
        obj["vehicle_info"] = v.vehicle_info
-       ls.append(obj)
+       result.append(obj)
 
-   return jsonify({"lists": ls})
+   return jsonify({"lists": result})
 
 
 # [查找已进场得订单和车牌]
-@app.route('/api/staff/<string:parking_id>/1/lists', methods=['GET'])
-def get_1_lists(parking_id):
-   order, vehicle = staffService.getOrdersVehicles(parking_id, 1)
-   ls = []
-   for o, v in order, vehicle:
+@app.route('/api/staff/<string:parking_id>/1_10/lists', methods=['GET'])
+def get_1_10_lists(parking_id):
+   ls = staffService.getParkingVehicles(parking_id, [1,10])
+   result = []
+   for o, v in ls:
       obj = {}
       obj["order_id"] = o.uuid
+      obj["state"] = o.state
       obj["vehicle_id"] = v.id
       obj["vehicle_number"] = v.vehicle_number
       obj["vehicle_info"] = v.vehicle_info
-      ls.append(obj)
+      result.append(obj)
 
-   return jsonify({"lists": ls})
+   return jsonify({"lists": result})
 
 '''
 用户退出登录

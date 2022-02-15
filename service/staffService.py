@@ -35,10 +35,10 @@ def getParkingInfo(parking_id):
 
     return parking, parking_gates
 
-def getOrdersVehicles(parking_id,state):
-    order, vehicle = db.session.query(ORDER,VEHICLE).filter(ORDER.parking_id == parking_id, ORDER.vehicle_id == VEHICLE.id, ORDER.state == state).all()
+def getParkingVehicles(parking_id, state):
+    ls = db.session.query(ORDER,VEHICLE).filter(ORDER.parking_id == parking_id, ORDER.vehicle_id == VEHICLE.id, ORDER.state.in_(state)).all()
 
-    return order, vehicle
+    return ls
 
 def getCounts_Orders(parking_id,state):
     orders_count = db.session.query(ORDER).filter(ORDER.parking_id == parking_id, ORDER.state == state).count()
