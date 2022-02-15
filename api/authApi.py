@@ -12,11 +12,10 @@ from flask import jsonify
 '''
 @app.route('/auth/verify/<string:code>',methods=['POST'])
 def verify(code):
-   realname = request.json["realname"]
-   idcard = request.json["idcard"]
-   phone = request.json["phone"]
+   encryptedData = request.json["encryptedData"]
+   vinum = request.json["vinum"]
 
-   result = authService.verify(code, realname, idcard, phone)
+   result = authService.verify(code, encryptedData, vinum)
 
    if result == 0:
       return jsonify({"result": "success"})

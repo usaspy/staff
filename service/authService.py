@@ -2,7 +2,7 @@ from model.pmc import *
 import requests as req
 import datetime
 import base64
-from common import tools
+from common import tools, wx_tools
 import config as cfg
 from common import mq
 import json
@@ -87,14 +87,19 @@ def removeToken(token, TOKENS_CACHE):
     return True
 
 #员工首次使用前身份验证
-def verify(code, realname, idcard, phone):
-    # 比对信息，匹配身份信息
-    staff_info = db.session.query(STAFF_INFO).filter(STAFF_INFO.wx_phone == phone, STAFF_INFO.idcard == idcard, STAFF_INFO.realname == realname).first()
+def verify(code, encryptedData, vinum):
+    status, session_key, openid = __code2Session(code, cfg.APPID, cfg.APPSECRET)
 
-    if staff_info:
-        status, session_key, openid = __code2Session(code, cfg.APPID, cfg.APPSECRET)
+    if status:
+        # 解密手机号
+        pc = wx_tools.WXBizDataCrypt(cfg.APPID, session_key)
+        mobile_obj = pc.decrypt(encryptedData, vinum)
+        mobile = mobile_obj['phoneNumber']
 
-        if status:
+        # 比对信息，匹配身份信息
+        staff_info = db.session.query(STAFF_INFO).filter(STAFF_INFO.wx_phone == mobile).first()
+
+        if staff_info:
             nowTime = datetime.datetime.now()
             uuid = tools.generateUUID()
             # 生成new_token
@@ -111,7 +116,6 @@ def verify(code, realname, idcard, phone):
 
             return 0
         else:
-            return 1  #调用微信服务器认证接口失败
-
+            return 2   #匹配失败，系统内无该员工信息
     else:
-        return 2   #匹配失败，系统内无该员工信息
+        return 1  # 调用微信服务器认证接口失败
