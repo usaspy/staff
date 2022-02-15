@@ -14,6 +14,7 @@ TOKENS_CACHE = defaultdict(int)
 
 from api import authApi
 from api import staffApi
+from api import orderApi
 from api import decorator
 from api import sysApi
 from service import authService
