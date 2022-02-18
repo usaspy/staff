@@ -109,9 +109,9 @@ def verify(code, encryptedData, vinum):
 
             new_staff = STAFF(uuid=uuid, open_id=openid, session_key=session_key, token=new_token,
                               state=0, created_at=nowTime, updated_at=nowTime)
+            db.session.add(new_staff)
             db.session.query(STAFF_INFO).filter(STAFF_INFO.id == staff_info.id).update(
                 {"staff_id": uuid, "updated_at": str(nowTime)})
-            db.session.add(new_staff)
             db.session.commit()
 
             return 0
