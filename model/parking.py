@@ -71,6 +71,8 @@ class PARKING_PROCESS(db.Model):
     in_at = db.Column(db.DateTime)
     out_at = db.Column(db.DateTime)
     order_id = db.Column(db.String(36))
+    in_confirm = db.Column(db.Integer)
+    out_confirm = db.Column(db.Integer)
 
 
 #停车场道闸

@@ -33,6 +33,7 @@ class STAFF_INFO(db.Model):
     wx_avatar_url = db.Column(db.String(255))
     wx_phone = db.Column(db.String(255))
     parking_id = db.Column(db.String(36))
+    gates_now = db.Column(db.String(255))
     created_at = db.Column(db.DateTime)
     updated_at = db.Column(db.DateTime)
     deleted_at = db.Column(db.DateTime)

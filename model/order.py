@@ -34,6 +34,9 @@ class BILL(db.Model):
     fee_2 = db.Column(db.DECIMAL)
     fee_mode = db.Column(db.INT)
     invoice_id = db.Column(db.String(36))
+    pay_state = db.Column(db.INT)
+    created_at  = db.Column(db.DateTime)
+    pay_at  = db.Column(db.DateTime)
 
 #发票
 class INVOICE(db.Model):

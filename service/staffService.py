@@ -35,8 +35,23 @@ def getParkingInfo(parking_id):
 
     return parking, parking_gates
 
-def getParkingVehicles(parking_id, state):
-    ls = db.session.query(ORDER,VEHICLE).filter(ORDER.parking_id == parking_id, ORDER.vehicle_id == VEHICLE.id, ORDER.state.in_(state)).all()
+def getParkingVehicles_1(parking_id):
+    ls = db.session.query(ORDER, VEHICLE, PARKING_PROCESS).filter(ORDER.parking_id == parking_id, ORDER.vehicle_id == VEHICLE.id, ORDER.uuid == PARKING_PROCESS.order_id, ORDER.state.in_([1])).all()
+
+    return ls
+
+def getParkingVehicles_10(parking_id):
+    ls = db.session.query(ORDER, VEHICLE, PARKING_PROCESS).filter(ORDER.parking_id == parking_id, ORDER.vehicle_id == VEHICLE.id, ORDER.uuid == PARKING_PROCESS.order_id, ORDER.state.in_([10])).all()
+
+    return ls
+
+def getParkingVehicles_20(parking_id):
+    ls = db.session.query(ORDER, VEHICLE, PARKING_PROCESS, BILL).filter(ORDER.parking_id == parking_id, ORDER.vehicle_id == VEHICLE.id, ORDER.uuid == PARKING_PROCESS.order_id, BILL.order_id == ORDER.uuid, ORDER.state.in_([20])).all()
+
+    return ls
+
+def getParkingVehicles_0(parking_id):
+    ls = db.session.query(ORDER,VEHICLE).filter(ORDER.parking_id == parking_id, ORDER.vehicle_id == VEHICLE.id, ORDER.state.in_([0])).all()
 
     return ls
 
@@ -74,3 +89,38 @@ def read_all_messages(staff_id):
         return False
 
     return True
+
+
+def staff_quit(staff_id):
+    try:
+        db.session.query(STAFF_INFO).filter(STAFF_INFO.staff_id == staff_id).update({"gates_now": None})
+        db.session.commit()
+    except Exception as ex:
+        print(ex)
+        return False
+
+    return True
+
+def staff_enter(staff_id, gates):
+    try:
+        db.session.query(STAFF_INFO).filter(STAFF_INFO.staff_id == staff_id).update({"gates_now": gates})
+        db.session.commit()
+    except Exception as ex:
+        print(ex)
+        return False
+
+    return True
+
+def set_parking_state(staff_id, parking_id, parking_state):
+    try:
+        staff_info = db.session.query(STAFF_INFO).filter(STAFF_INFO.staff_id == staff_id).first()
+
+        if staff_info and staff_info.parking_id == parking_id:
+            db.session.query(PARKING).filter(PARKING.uuid == staff_info.parking_id).update({"state": parking_state})
+            db.session.commit()
+
+            return True
+    except Exception as ex:
+        print(ex)
+
+    return False
