@@ -21,19 +21,22 @@ from common import tools
 '''
 def go_in_confirm(staff_id, order_id):
     try:
-        db.session.query(PARKING_PROCESS).filter(PARKING_PROCESS.order_id == order_id).update(
-            {"in_confirm": 1})
+        order = db.session.query(ORDER).filter(ORDER.uuid == order_id, ORDER.state == 10).first()
+        #检查该单的状态=10（已入场、待确认）
+        if order:
+            db.session.query(PARKING_PROCESS).filter(PARKING_PROCESS.order_id == order_id).update(
+                {"in_confirm": 1})
 
-        db.session.query(ORDER).filter(ORDER.uuid == order_id).update(
-            {"state": 1, "updated_at": datetime.datetime.now()})
+            db.session.query(ORDER).filter(ORDER.uuid == order_id).update(
+                {"state": 1, "updated_at": datetime.datetime.now()})
 
-        order_process = ORDER_PROCESS(order_id=order_id, state=1, timestamp=datetime.datetime.now(),
-                                          executor=staff_id,
-                                          executor_type='staff')
-        db.session.add(order_process)
-        db.session.commit()
+            order_process = ORDER_PROCESS(order_id=order_id, state=1, timestamp=datetime.datetime.now(),
+                                              executor=staff_id,
+                                              executor_type='staff')
+            db.session.add(order_process)
+            db.session.commit()
 
-        return True
+            return True
     except Exception as ex:
         print(ex)
 
