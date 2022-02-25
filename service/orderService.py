@@ -69,10 +69,10 @@ def go_out_pay_manual(order_id):
 1.此时已经开始计费
 2.后续需门卫确认（go_in_confirm），并修改订单状态为order_state=1
 '''
-def go_out_confirm(staff_id, order_id):
+def go_out_confirm(staff_id, order_id, gate_id):
     try:
         db.session.query(PARKING_PROCESS).filter(PARKING_PROCESS.order_id == order_id).update(
-            {"out_confirm": 1, "out_at": datetime.datetime.now()})
+            {"out_confirm": 1, "out_gate_id": gate_id, "out_at": datetime.datetime.now()})
 
         db.session.query(ORDER).filter(ORDER.uuid == order_id).update(
             {"state": 3, "updated_at": datetime.datetime.now()})
@@ -99,10 +99,10 @@ def go_out_confirm(staff_id, order_id):
 1.此时已经开始计费
 2.后续需门卫确认（go_in_confirm），并修改订单状态为order_state=1
 '''
-def go_out_confirm_20(staff_id, order_id):
+def go_out_confirm_20(staff_id, order_id, gate_id):
     try:
         db.session.query(PARKING_PROCESS).filter(PARKING_PROCESS.order_id == order_id).update(
-            {"out_confirm": 1, "out_at": datetime.datetime.now()})
+            {"out_confirm": 1, "out_gate_id": gate_id, "out_at": datetime.datetime.now()})
 
         db.session.query(ORDER).filter(ORDER.uuid == order_id).update(
             {"state": 3, "updated_at": datetime.datetime.now()})
