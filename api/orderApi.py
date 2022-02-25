@@ -38,9 +38,8 @@ def out_confirm(order_id):
    token_info = tools.getTokenInfo(request,TOKENS_CACHE)
 
    staff_id = token_info["uuid"]
-   gate_id = request.json["gate_id"]
 
-   result = orderService.go_out_confirm(staff_id, order_id, gate_id)
+   result = orderService.go_out_confirm(staff_id, order_id)
 
    if result:
       return jsonify({"result": "success"})
@@ -54,9 +53,8 @@ def out_confirm_20(order_id):
    token_info = tools.getTokenInfo(request,TOKENS_CACHE)
 
    staff_id = token_info["uuid"]
-   gate_id = request.json["gate_id"]
 
-   result = orderService.go_out_confirm_20(staff_id, order_id, gate_id)
+   result = orderService.go_out_confirm_20(staff_id, order_id)
 
    if result:
       return jsonify({"result": "success"})
