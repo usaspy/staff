@@ -38,7 +38,25 @@ def out_confirm(order_id):
    token_info = tools.getTokenInfo(request,TOKENS_CACHE)
 
    staff_id = token_info["uuid"]
-   result = orderService.go_out_confirm(staff_id, order_id)
+   gate_id = request.json["gate_id"]
+
+   result = orderService.go_out_confirm(staff_id, order_id, gate_id)
+
+   if result:
+      return jsonify({"result": "success"})
+   else:
+      return jsonify({"result": "failure", "reason":"离场确认出现异常"})
+
+
+#预约单状态变更-当前离场-人工放行确认
+@app.route('/api/staff/out_confirm_20/<string:order_id>',methods=['PUT'])
+def out_confirm_20(order_id):
+   token_info = tools.getTokenInfo(request,TOKENS_CACHE)
+
+   staff_id = token_info["uuid"]
+   gate_id = request.json["gate_id"]
+
+   result = orderService.go_out_confirm_20(staff_id, order_id, gate_id)
 
    if result:
       return jsonify({"result": "success"})

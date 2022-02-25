@@ -69,10 +69,10 @@ def go_out_pay_manual(order_id):
 1.此时已经开始计费
 2.后续需门卫确认（go_in_confirm），并修改订单状态为order_state=1
 '''
-def go_out_confirm(staff_id, order_id):
+def go_out_confirm(staff_id, order_id, gate_id):
     try:
         db.session.query(PARKING_PROCESS).filter(PARKING_PROCESS.order_id == order_id).update(
-            {"out_confirm": 1})
+            {"out_confirm": 1, "out_gate_id": gate_id, "out_at": datetime.datetime.now()})
 
         db.session.query(ORDER).filter(ORDER.uuid == order_id).update(
             {"state": 3, "updated_at": datetime.datetime.now()})
@@ -91,6 +91,34 @@ def go_out_confirm(staff_id, order_id):
         return False
 
     return True
+
+
+
+'''
+当车辆离场时，如果车主手机没电了，需要线下缴费，并由门岗端点击“离场放行”
+1.此时已经开始计费
+2.后续需门卫确认（go_in_confirm），并修改订单状态为order_state=1
+'''
+def go_out_confirm_20(staff_id, order_id, gate_id):
+    try:
+        db.session.query(PARKING_PROCESS).filter(PARKING_PROCESS.order_id == order_id).update(
+            {"out_confirm": 1, "out_gate_id": gate_id, "out_at": datetime.datetime.now()})
+
+        db.session.query(ORDER).filter(ORDER.uuid == order_id).update(
+            {"state": 3, "updated_at": datetime.datetime.now()})
+
+        order_process = ORDER_PROCESS(order_id=order_id, state=3, timestamp=datetime.datetime.now(),
+                                          executor=staff_id,
+                                          executor_type='staff')
+
+        db.session.add(order_process)
+        db.session.commit()
+    except Exception as ex:
+        print(ex)
+        return False
+
+    return True
+
 
 
 ##计算费用，生成账单
