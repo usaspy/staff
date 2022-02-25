@@ -194,6 +194,7 @@ def get_20_lists(parking_id):
       obj["out_gate_id"] = pp.out_gate_id
       obj["fee_1"] = str(b.fee_1)
       obj["pay_state"] = b.pay_state
+      obj["duration"] = b.duration
       obj["pay_at"] = b.pay_at
 
       result.append(obj)
