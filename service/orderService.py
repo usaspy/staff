@@ -4,7 +4,6 @@ from api import db
 from model.order import ORDER
 from model.order import ORDER_PROCESS
 from model.owner import VEHICLE
-from model.owner import OWNER_LAST_ORDER
 from model.parking import PARKING
 from model.parking import PARKING_RULES
 from model.parking import PARKING_PROCESS
@@ -85,7 +84,6 @@ def go_out_confirm(staff_id, order_id):
         db.session.query(BILL).filter(BILL.order_id == order_id).update(
             {"pay_state": 1, "pay_at": datetime.datetime.now()})
 
-        db.session.query(OWNER_LAST_ORDER).filter(OWNER_LAST_ORDER.the_last_order == order_id).delete()
         db.session.add(order_process)
         db.session.commit()
     except Exception as ex:

@@ -34,13 +34,12 @@ class VEHICLE(db.Model):
     deleted_at = db.Column(db.DateTime)
     used_at = db.Column(db.DateTime)
 
-#车主最新订单
-class OWNER_LAST_ORDER(db.Model):
-    __tablename__='WX_OWNER_LAST_ORDER'
-    __table_args__ = {"extend_existing": True}
-    id = db.Column(db.INT,primary_key=True, autoincrement=True)
-    owner_id = db.Column(db.String(36))
-    the_last_order = db.Column(db.String(36))
+#车主当前订单（未关闭的）
+class OWNER_CURRENT_ORDER(db.Model):
+    __tablename__='V_OWNER_CURRENT_ORDER'
+    status = db.Column(db.INT)
+    owner_id = db.Column(db.String(36),primary_key=True)
+    current_order = db.Column(db.String(36))
 
 #车主附加信息
 class OWNER_INFO(db.Model):
