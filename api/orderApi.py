@@ -63,3 +63,16 @@ def out_confirm_20(order_id):
       return jsonify({"result": "success"})
    else:
       return jsonify({"result": "failure", "reason":"离场确认出现异常"})
+
+
+#预约单状态变更-入场确认-门岗不予放行
+@app.route('/api/order/<string:order_id>/cancel',methods=['GET'])
+def cancelOrder(order_id):
+   token_info = tools.getTokenInfo(request,TOKENS_CACHE)
+
+   result = orderService.cancel(token_info["uuid"], order_id)
+
+   if result:
+      return jsonify({"result": "success"})
+   else:
+      return jsonify({"result": "failure", "reason": "预约单取消失败"})

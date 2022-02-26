@@ -141,8 +141,28 @@ def __generate_bill(order_id):
     bill.duration = (now_time - go_in_time).total_seconds()
     bill.rule_id = rule_id
     bill.fee_mode = 1
-    bill.fee_1 = fee_1
+    bill.fee_1 = 0.01
     bill.pay_state = 0  #待支付
     bill.created_at = now_time
 
     return bill
+
+
+'''
+取消预约单
+'''
+def cancel(staff_id, order_id):
+    try:
+        db.session.query(ORDER).filter(ORDER.uuid == order_id).update(
+            {"state": 9, "updated_at": datetime.datetime.now()})
+
+        order_process = ORDER_PROCESS(order_id=order_id, state=9, timestamp=datetime.datetime.now(),
+                                      executor=staff_id,
+                                      executor_type='staff')
+        db.session.add(order_process)
+        db.session.commit()
+    except Exception as ex:
+        print(ex)
+        return False
+
+    return True
