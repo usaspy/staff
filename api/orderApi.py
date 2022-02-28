@@ -20,7 +20,7 @@ def in_confirm(order_id):
    if result:
       return jsonify({"result": "success"})
    else:
-      return jsonify({"result": "failure", "reason":"入场确认出现异常"})
+      return jsonify({"result": "failure", "reason":"入场确认出现异常，可能原因：车主已取消"})
 
 
 #预约单状态变更-场内车辆-离场-显示费用
