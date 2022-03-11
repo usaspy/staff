@@ -82,7 +82,7 @@ def go_out_confirm(staff_id, order_id, gate_id):
                                           executor_type='staff')
 
         db.session.query(BILL).filter(BILL.order_id == order_id).update(
-            {"pay_state": 1, "pay_at": datetime.datetime.now()})
+            {"pay_state": 1, "pay_at": datetime.datetime.now(), "pay_channel": 1, "pay_item": 1})
 
         db.session.add(order_process)
         db.session.commit()
